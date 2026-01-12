@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authorization;
+using task_manager_api.Dtos;
 using TaskManager.Models;
 using TaskManager.Data;
 namespace TaskManager.API
@@ -18,41 +20,111 @@ namespace TaskManager.API
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        private int GetCurrentUserId()
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
-            var tasks = await _context.Tasks.ToListAsync();
+            if (!int.TryParse(userIdClaim, out var userId))
+                return -1;
+
+            return userId;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetTask()
+        {
+            var userId = GetCurrentUserId();
+            
+            var tasks = await _context.Tasks
+                .Where(t => t.UserId == userId)
+                .Select(t => new TaskItemDto()
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    IsDone = t.IsDone,
+                    UserId = t.UserId
+                }).ToListAsync();
+            
             return Ok(tasks);
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TaskItemDto>> GetTask(int id)
+        {
+            var userId = GetCurrentUserId();
+            
+            var task = await _context.Tasks
+                .Where(t => t.Id == id && t.UserId == userId)  // Make sure task belongs to user
+                .Select(t => new TaskItemDto
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    IsDone = t.IsDone,
+                    UserId = t.UserId
+                })
+                .FirstOrDefaultAsync();
+
+            if (task == null)
+            {
+                return NotFound(new { message = "Task not found" });
+            }
+
+            return Ok(task);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TaskItem task)
+        public async Task<ActionResult<TaskItemDto>> CreateTask(CreateTaskDto dto)
         {
+            var userId = GetCurrentUserId();
+
+            var task = new TaskItem
+            {
+                Title = dto.Title,
+                IsDone = false,
+                UserId = userId
+            };
             
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = task.Id }, task);
+
+            var taskDto = new TaskItemDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                IsDone = task.IsDone,
+                UserId = task.UserId
+            };
+            
+            return CreatedAtAction(nameof(GetTask), new { id = taskDto.Id }, taskDto);
         }
 
         [HttpPut("{id}")] 
-        public async Task<IActionResult> Update(int id, [FromBody] TaskItem updated)
+        public async Task<IActionResult> UpdateTask(int id, UpdateTaskDto dto)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return NotFound();
+            var userId =  GetCurrentUserId();
+            
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+            
+            if (task == null) return NotFound(new {Message = "Task not found"});
+            
+            task.Title = dto.Title;
+            task.IsDone = dto.IsDone;
 
-            task.Title = updated.Title;
-            task.IsDone = updated.IsDone;
             await _context.SaveChangesAsync();
-
-            return Ok(task);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null) return NotFound();
+            var userId = GetCurrentUserId();
+            
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+            
+            if (task == null) return NotFound(new  {Message = "Task not found"});
 
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
