@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthentication();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
+//added this for me to check if the JWT authorization is working properly using swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo 
