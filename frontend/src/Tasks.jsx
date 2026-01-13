@@ -9,12 +9,12 @@ function Tasks() {
   const [editTitle, setEditTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all');
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
-    api.get('/tasks')
       fetchTasks();
   }, []);
 
@@ -31,6 +31,16 @@ function Tasks() {
       setLoading(false);
     }
   };
+
+  const filteredTask = tasks.filter(task => {
+    if(filter == 'completed') return task.isDone;
+    if(filter == 'active') return !task.isDone;
+    return true;
+  });
+
+  const allCount = tasks.length;
+  const completedCount = tasks.filter(t => t.isDone).length;
+  const activeCount = tasks.filter(t => !t.isDone).length;
 
   const handleCreateTask = async (e) => {
     e.preventDefault();
@@ -141,11 +151,30 @@ function Tasks() {
         <button type="submit">Add Task</button>
       </form>
 
+      <div className='filterContainer'>
+        <label htmlFor='filter'>Filter Tasks:</label>
+        <select
+          id='filter'
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className='filterSelect'>
+
+              <option value="all">All ({allCount})</option>
+              <option value="active">Active ({activeCount})</option>
+              <option value="all">completed ({completedCount})</option>
+
+          </select>
+      </div>
+
       <ul className="taskList">
-        {tasks.length === 0 ? (
-          <li className="emptyState">No tasks yet. Create one above!</li>
+        {filteredTask.length === 0 ? (
+          <li className="emptyState">
+            {filter === 'all' && 'No tasks yet. Create one above!'}
+            {filter === 'active' && 'No active tasks!'}
+            {filter === 'completed' && 'No completed tasks yet!'}
+          </li>
         ) : (
-          tasks.map(task => (
+          filteredTask.map(task => (
             <li key={task.id} className={`taskItem ${task.isDone ? 'done' : ''}`}>
               <input
                 type="checkbox"

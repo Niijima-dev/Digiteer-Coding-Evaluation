@@ -324,3 +324,32 @@
   color: #999;
   font-style: italic;
 }
+
+.filterContainer{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.filterContainer label{
+  color: #aaaaaa;
+  font-size: 14px;
+}
+
+.filterSelect{
+  padding: 8px 12px;
+  background-color: #3a3a3a;
+  color: #fff;
+  border: 1px solid #4a4a4a;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+}
+
+.filterSelect:hover{
+  background-color: #4a4a4a;
+}
