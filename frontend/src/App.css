@@ -44,20 +44,81 @@
   color: #888;
 }
 
-.app{
-  background-color: #1e1e1e;
+.loginContainer{
+  max-width: 450px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #2a2a2a;
   border-radius: 20px;
-  padding-top: 10px;
-  padding-left: 30px;
-  padding-right: 30px;
-  font-family: sans-serif;
-  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.InputFields{
+.loginContainer h2{
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.loginContainer form{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.loginContainer input{
   width: 100%;
   padding: 12px 16px;
-  margin-bottom: 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #3a3a3a;
+  color: #ffffff;
 }
+
+.loginContainer input:focus{
+  outline: none;
+  background-color: #4a4a4a;
+}
+
+.loginContainer button[type="submit"]{
+  padding: 12px;
+  background-color: #4caf50;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.loginContainer button[type="submit"]:hover{
+  background-color: #45a049;
+}
+
+.loginContainer p{
+  text-align: center;
+  margin-top: 15px;
+  color: #aaaaaa;
+}
+
+.loginContainer p button {
+  background: none;
+  border: none;
+  color: #4CAF50;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+
+
+

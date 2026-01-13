@@ -21,7 +21,7 @@ function Login(){
             localStorage.setItem('token', Response.data.token);
             localStorage.setItem('user', JSON.stringify(Response.data.user));
 
-            Navigate('/task');
+            Navigate('/tasks');
 
         }catch(err){
             SetError(err.Response?.data.message || 'Something went wrong (╥﹏╥)')
@@ -29,8 +29,8 @@ function Login(){
     };
 
     return(
-        <div>
-            <h2 className="FormTitle">{IsLogin ? 'User Login' : 'User Registration'}</h2>
+        <div className="loginContainer">
+            <h2>{IsLogin ? 'User Login' : 'User Registration'}</h2>
 
             {Error && <div className="error">{Error}</div>}
 
@@ -38,7 +38,6 @@ function Login(){
                 <div>
                     <input
                         type="email"
-                        className="InputFields"
                         placeholder="Email"
                         value={Email}
                         onChange={(e) => SetEmail(e.target.value)}
@@ -49,7 +48,6 @@ function Login(){
                 <div>
                     <input
                         type="password"
-                        className="InputFields"
                         placeholder="Password"
                         value={PasswordHash}
                         onChange={(e) => SetPassword(e.target.value)}
