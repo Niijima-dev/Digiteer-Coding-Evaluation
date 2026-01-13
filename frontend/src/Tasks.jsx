@@ -35,7 +35,11 @@ function Tasks() {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     
-    if (!newTaskTitle.trim()) return;
+    if (!newTaskTitle.trim()){
+      setError('Task title cannot be empty (╯°□°)╯︵ ┻━┻');
+      return;
+    }
+      
 
     try{
       const response = await api.post('/tasks', {title: newTaskTitle});
@@ -50,12 +54,13 @@ function Tasks() {
 
   const handleToggleTask = async (task) => {
     try{
-      await api.put(`/task/${task.id}`, {
+      await api.put(`/tasks/${task.id}`, {
         title: task.title,
         isDone: !task.isDone
       });
 
-      setTasks(task.map(t => t.id == task.id ? {...t, isDone: !t.isDone} : t));
+      setTasks(tasks.map(t => 
+        t.id == task.id ? {...t, isDone: !t.isDone} : t));
       setError('');
     }catch(err){
       setError('Failed to update task');
@@ -117,18 +122,16 @@ function Tasks() {
   return (
     <div className='taskContainer'>
       <div className='taskHeader'>
-        <h2>Tasks</h2>
-        <div className='headerRow'>
+        <h2>Tasks Manager</h2>
           <p>Welcome, {user.email}</p>
           <button onClick={handleLogout} className='logoutButton'>
             Logout
           </button>
-        </div>
       </div>
 
       {error && <div className='error'>{error}</div>}
 
-      <form onSubmit={handleCreateTask} className="task-form">
+      <form onSubmit={handleCreateTask} className="taskForm">
         <input
           type="text"
           placeholder="Enter new task..."
@@ -138,12 +141,12 @@ function Tasks() {
         <button type="submit">Add Task</button>
       </form>
 
-      <ul className="task-list">
+      <ul className="taskList">
         {tasks.length === 0 ? (
-          <li className="empty-state">No tasks yet. Create one above!</li>
+          <li className="emptyState">No tasks yet. Create one above!</li>
         ) : (
           tasks.map(task => (
-            <li key={task.id} className={`task-item ${task.isDone ? 'done' : ''}`}>
+            <li key={task.id} className={`taskItem ${task.isDone ? 'done' : ''}`}>
               <input
                 type="checkbox"
                 checked={task.isDone}
@@ -151,7 +154,7 @@ function Tasks() {
               />
               
               {editingTask === task.id ? (
-                <div className="edit-mode">
+                <div className="editMode">
                   <input
                     type="text"
                     value={editTitle}
@@ -162,9 +165,9 @@ function Tasks() {
                   <button onClick={handleCancelEdit}>Cancel</button>
                 </div>
               ) : (
-                <div className="view-mode">
-                  <span className="task-title">{task.title}</span>
-                  <div className="task-actions">
+                <div className="viewMode">
+                  <span className="taskTitle">{task.title}</span>
+                  <div className="taskActions">
                     <button onClick={() => handleStartEdit(task)}>Edit</button>
                     <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
                   </div>
