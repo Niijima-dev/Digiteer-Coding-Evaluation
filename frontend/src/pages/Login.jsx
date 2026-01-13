@@ -6,22 +6,22 @@ import api from '../api/axios.js'
 function Login(){
     const [email, SetEmail] = useState('');
     const [passwordHash, SetPassword] = useState('');
-    const [Error, SetError] = useState('');
-    const [IsLogin, SetIsLogin] = useState(true);
-    const Navigate = useNavigate();
+    const [error, SetError] = useState('');
+    const [isLogin, SetIsLogin] = useState(true);
+    const navigate = useNavigate();
 
     const HandleSubmit = async (e) => {
         e.preventDefault();
         SetError('')
 
         try{
-            const Endpoint = IsLogin ? '/User/Login' : '/User/Register'
+            const Endpoint = isLogin ? '/User/Login' : '/User/Register'
             const Response = await api.post(Endpoint, {email, passwordHash});
 
             localStorage.setItem('token', Response.data.token);
             localStorage.setItem('user', JSON.stringify(Response.data.user));
 
-            Navigate('/tasks');
+            navigate('/tasks');
 
         }catch(err){
             SetError(err.Response?.data.message || 'Something went wrong (╥﹏╥)')
@@ -30,9 +30,9 @@ function Login(){
 
     return(
         <div className="loginContainer">
-            <h2>{IsLogin ? 'User Login' : 'User Registration'}</h2>
+            <h2>{isLogin ? 'User Login' : 'User Registration'}</h2>
 
-            {Error && <div className="error">{Error}</div>}
+            {error && <div className="error">{error}</div>}
 
             <form onSubmit={HandleSubmit}>
                 <div>
@@ -57,14 +57,14 @@ function Login(){
                 </div>
 
                 <button type="submit" className="SubmitButton">
-                    {IsLogin ? 'Login' : 'Register'}
+                    {isLogin ? 'Login' : 'Register'}
                 </button>
             </form>
 
             <p>
-                {IsLogin ? "Don't have an account? " : "Already have an account? "}
-                <button onClick={() => SetIsLogin(!IsLogin)}>
-                    {IsLogin ? 'Register' : 'Login'}
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                <button onClick={() => SetIsLogin(!isLogin)}>
+                    {isLogin ? 'Register' : 'Login'}
                 </button>
             </p>
 
