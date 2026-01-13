@@ -1,3 +1,6 @@
+*{
+  box-sizing: border-box;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +42,22 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.app{
+  background-color: #1e1e1e;
+  border-radius: 20px;
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+.InputFields{
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 8px;
 }
