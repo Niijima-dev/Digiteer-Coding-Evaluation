@@ -24,7 +24,7 @@ function Login(){
             navigate('/tasks');
 
         }catch(err){
-            SetError(err.Response?.data.message || 'Something went wrong (╥﹏╥)')
+            SetError(err.Response?.data.message || 'Invalid credentials')
         }
     };
 
