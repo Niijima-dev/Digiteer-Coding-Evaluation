@@ -4,8 +4,8 @@ import '../App.css';
 import api from '../api/axios.js'
 
 function Login(){
-    const [Email, SetEmail] = useState('');
-    const [PasswordHash, SetPassword] = useState('');
+    const [email, SetEmail] = useState('');
+    const [passwordHash, SetPassword] = useState('');
     const [Error, SetError] = useState('');
     const [IsLogin, SetIsLogin] = useState(true);
     const Navigate = useNavigate();
@@ -16,7 +16,7 @@ function Login(){
 
         try{
             const Endpoint = IsLogin ? '/User/Login' : '/User/Register'
-            const Response = await api.post(Endpoint, {Email, PasswordHash});
+            const Response = await api.post(Endpoint, {email, passwordHash});
 
             localStorage.setItem('token', Response.data.token);
             localStorage.setItem('user', JSON.stringify(Response.data.user));
@@ -39,7 +39,7 @@ function Login(){
                     <input
                         type="email"
                         placeholder="Email"
-                        value={Email}
+                        value={email}
                         onChange={(e) => SetEmail(e.target.value)}
                         required                    
                     />
@@ -49,7 +49,7 @@ function Login(){
                     <input
                         type="password"
                         placeholder="Password"
-                        value={PasswordHash}
+                        value={passwordHash}
                         onChange={(e) => SetPassword(e.target.value)}
                         required   
                         minLength={8}                 
