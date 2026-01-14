@@ -8,11 +8,13 @@ function Login(){
     const [passwordHash, SetPassword] = useState('');
     const [error, SetError] = useState('');
     const [isLogin, SetIsLogin] = useState(true);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const HandleSubmit = async (e) => {
         e.preventDefault();
         SetError('')
+        setLoading(true);
 
         try{
             const Endpoint = isLogin ? '/User/Login' : '/User/Register'
@@ -24,7 +26,19 @@ function Login(){
             navigate('/tasks');
 
         }catch(err){
-            SetError(err.Response?.data.message || 'Invalid credentials')
+            const status = err.response?.status;
+
+            if (status === 401) {
+                SetError(err.response?.data?.message || 'Invalid credentials');
+            } else if (status === 400) {
+                SetError(err.response?.data?.message || 'Bad request');
+            } else if (status === 500) {
+                SetError('Internal Server Error');
+            } else {
+                SetError('Something went wrong');
+            }
+        }finally{
+            setLoading(false);
         }
     };
 
@@ -41,7 +55,8 @@ function Login(){
                         placeholder="Email"
                         value={email}
                         onChange={(e) => SetEmail(e.target.value)}
-                        required                    
+                        required
+                        disabled={loading}                    
                     />
                 </div>
 
@@ -52,12 +67,13 @@ function Login(){
                         value={passwordHash}
                         onChange={(e) => SetPassword(e.target.value)}
                         required   
-                        minLength={8}                 
+                        minLength={8}
+                        disabled={loading}              
                     />
                 </div>
 
-                <button type="submit" className="SubmitButton">
-                    {isLogin ? 'Login' : 'Register'}
+                <button type="submit" className="SubmitButton" disabled={loading}>
+                    {loading? 'Please wait...' : isLogin ? 'Login' : 'Register'}
                 </button>
             </form>
 
