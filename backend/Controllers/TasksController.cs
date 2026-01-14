@@ -11,6 +11,7 @@ namespace TaskManager.API
 {
     [Route("tasks")]
     [ApiController]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -31,7 +32,6 @@ namespace TaskManager.API
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetTask()
         {
             var userId = GetCurrentUserId();
